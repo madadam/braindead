@@ -5,15 +5,19 @@ module Braindead
       @last  = last
     end
 
-    def parse(input, output)
-      token = input[0]
+    def parse(input)
+      token = input.peek
 
       if token && token >= @first && token <= @last
-        input.position += 1
-        success(output, token)
+        input.advance!
+        success(token)
       else
-        failure
+        failure(input)
       end
+    end
+
+    def description
+      "#{@first.inspect} .. #{@last.inspect}"
     end
   end
 end

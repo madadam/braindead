@@ -23,8 +23,8 @@ class ParserTest < Test::Unit::TestCase
     assert_raise(SyntaxError) { parser.parse('g') }
   end
 
-  def test_any_except
-    parser = Parser.define { root any_except('a', 'b', 'c') }
+  def test_none_of
+    parser = Parser.define { root none_of('a', 'b', 'c') }
 
     assert_equal 'd', parser.parse('d')
 
@@ -33,8 +33,8 @@ class ParserTest < Test::Unit::TestCase
     assert_raise(SyntaxError) { parser.parse('c') }
   end
 
-  def test_any_of
-    parser = Parser.define { root any_of('a', 'c', 'e') }
+  def test_one_of
+    parser = Parser.define { root one_of('a', 'c', 'e') }
 
     assert_equal 'a', parser.parse('a')
     assert_equal 'c', parser.parse('c')

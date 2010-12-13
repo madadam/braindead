@@ -25,13 +25,12 @@ module Braindead
 
     private
 
-    def success(output, *results)
-      results.each { |result| output << result }
-      true
+    def success(*values)
+      Success.new(*values)
     end
 
-    def failure
-      false
+    def failure(input)
+      Failure.new(input.position, description)
     end
   end
 end

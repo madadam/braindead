@@ -1,18 +1,21 @@
 module Braindead
   class Satisfy < Rule
-    def initialize(&block)
-      @block = block
+    def initialize(description = nil, &block)
+      @description = description
+      @block       = block
     end
 
-    def parse(input, output)
-      token = input[0]
+    def parse(input)
+      token = input.peek
 
       if @block.call(token)
-        input.position += 1
-        success(output, token)
+        input.advance!
+        success(token)
       else
-        failure
+        failure(input)
       end
     end
+
+    attr_reader :description
   end
 end

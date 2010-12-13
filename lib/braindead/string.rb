@@ -4,14 +4,18 @@ module Braindead
       @string = string
     end
 
-    def parse(input, output)
-      if input[0, @string.length] == @string
-        input.position += @string.length
-        output << @string
-        true
+    def parse(input)
+      if input.peek(@string.length) == @string
+        input.advance!(@string.length)
+
+        success(@string)
       else
-        false
+        failure(input)
       end
+    end
+
+    def description
+      @string.inspect
     end
   end
 end

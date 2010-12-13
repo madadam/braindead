@@ -4,10 +4,20 @@ module Braindead
       @rule = rule.to_parser_rule
     end
 
-    def parse(input, output)
-      loop { break unless @rule.parse(input, output) }
+    def parse(input)
+      results = success
 
-      true
+      loop do
+        result = @rule.parse(input)
+
+        if result.success?
+          results.concat(result)
+        else
+          break
+        end
+      end
+
+      results
     end
 
     def parts

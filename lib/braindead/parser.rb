@@ -8,23 +8,22 @@ module Braindead
       @rules = {}
 
       # Predefined rules
-      @rules[:whitespace] = skip(zero_or_more(any_of(' ', "\t", "\n", "\v", "\f", "\r")))
+      @rules[:whitespace] = skip(zero_or_more(one_of(' ', "\t", "\n", "\v", "\f", "\r")))
     end
 
     attr_reader :rules
 
-    def parse(input)
+    def parse(string)
       resolve!
 
-      root = rules[:root] or raise RuleNotDefined, "root rule not defined"
+      root   = rules[:root] or raise RuleNotDefined, "root rule not defined"
+      input  = Input.new(string)
+      result = root.parse(input)
 
-      input  = Cursor.new(input)
-      output = []
-
-      if root.parse(input, output)
-        output.length > 1 ? output : output.first
+      if result.success?
+        result.value
       else
-        raise Braindead::SyntaxError
+        raise Braindead::SyntaxError.new(result.position, result.description, string)
       end
     end
 
@@ -64,20 +63,22 @@ module Braindead
       None
     end
 
-    def any_of(*tokens)
-      satisfy { |token| tokens.include?(token) }
+    def one_of(*tokens)
+      description = "one of [#{tokens.map(&:inspect).join(', ')}]"
+      satisfy(description) { |token| tokens.include?(token) }
     end
 
-    def any_except(*tokens)
-      satisfy { |token| !tokens.include?(token) }
+    def none_of(*tokens)
+      description = "none of [#{tokens.map(&:inspect).join(', ')}]"
+      satisfy(description) { |token| !tokens.include?(token) }
     end
 
     def eof
       Eof
     end
 
-    def satisfy(&block)
-      Satisfy.new(&block)
+    def satisfy(description = nil, &block)
+      Satisfy.new(description, &block)
     end
 
     def transform(rule, *args, &block)
