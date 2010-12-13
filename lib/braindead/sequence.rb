@@ -5,16 +5,20 @@ module Braindead
       @second = second.to_parser_rule
     end
 
-    def parse(input, output)
-      input_position = input.position
-      output_length  = output.length
+    def parse(input)
+      position = input.position
 
-      if @first.parse(input, output) && @second.parse(input, output)
-        success(output)
-      else
-        input.position = input_position
-        output.slice!(output_length .. -1)
-        failure
+      @first.parse(input).if_success do |first|
+        second = @second.parse(input)
+
+        if second.success?
+          first.concat(second)
+        else
+          input.position = position
+
+          second.partial = true
+          second
+        end
       end
     end
 
@@ -25,6 +29,10 @@ module Braindead
     def resolve_parts!(rules)
       @first  = @first.resolve(rules)
       @second = @second.resolve(rules)
+    end
+
+    def description
+      @first.description
     end
   end
 end

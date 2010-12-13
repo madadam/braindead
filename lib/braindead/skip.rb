@@ -10,8 +10,8 @@ module Braindead
       @rule = rule.to_parser_rule
     end
 
-    def parse(input, output)
-      @rule.parse(input, [])
+    def parse(input)
+      @rule.parse(input).if_success { success }
     end
 
     def parts
@@ -20,6 +20,10 @@ module Braindead
 
     def resolve_parts!(rules)
       @rule = @rule.resolve(rules)
+    end
+
+    def description
+      @rule.description
     end
   end
 end

@@ -27,10 +27,10 @@ JsonParser = Braindead::Parser.define do
 
   rule :number, ('0' / (:non_zero_digit >> zero_or_more(:digit))) >> :whitespace
   rule :non_zero_digit, '1' .. '9'
-  rule :digit,          '0' / :non_zero_digit
+  rule :digit,          '0' .. '9'
 
   rule :string, :lquote >> zero_or_more(:char) >> :rquote
-  rule :char, any_except('"', '\\') / :escape_sequence
+  rule :char, none_of('"', '\\') / :escape_sequence
   rule :escape_sequence, transform('\\"', '"') /
                          transform('\\n', "\n") /
                          transform('\\t', "\t")

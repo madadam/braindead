@@ -5,13 +5,9 @@ module Braindead
       @block = block
     end
 
-    def parse(input, output)
-      temp_output = []
-
-      if @rule.parse(input, temp_output)
-        success(output, @block.call(*temp_output))
-      else
-        failure
+    def parse(input)
+      @rule.parse(input).if_success do |result|
+        success(@block.call(*result.values))
       end
     end
 
@@ -21,6 +17,10 @@ module Braindead
 
     def resolve_parts!(rules)
       @rule = @rule.resolve(rules)
+    end
+
+    def description
+      @rule.description
     end
   end
 end
