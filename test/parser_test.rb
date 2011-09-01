@@ -99,6 +99,16 @@ class ParserTest < Test::Unit::TestCase
     assert_equal ['foo', 'foo'], parser.parse('foofoo')
   end
 
+  def test_one_or_more
+    parser = Parser.define { root one_or_more('foo') }
+
+    assert_equal 'foo',          parser.parse('foo')
+    assert_equal ['foo', 'foo'], parser.parse('foofoo')
+
+    assert_raise(SyntaxError) { parser.parse('')    }
+    assert_raise(SyntaxError) { parser.parse('bar') }
+  end
+
   def test_skip
     parser = Parser.define { root skip('foo') }
 

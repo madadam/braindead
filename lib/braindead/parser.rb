@@ -55,6 +55,10 @@ module Braindead
       (stuff >> zero_or_more(skip(separator) >> stuff)) / none
     end
 
+    def one_or_more(rule)
+      rule >> zero_or_more(rule)
+    end
+
     def skip(rule)
       Skip.new(rule)
     end
