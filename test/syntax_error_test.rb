@@ -83,11 +83,11 @@ class SyntaxErrorTest < Test::Unit::TestCase
   def test_recursion_error
     parser = Parser.define do
       root :list
-      rule :list,  "(" >> (:list / none) >> ")"
+      rule :list, "(" >> ((:list >> ")") / ")")
     end
 
-    assert_syntax_error('")"', 1) { parser.parse('(]') }
-    assert_syntax_error('")"', 2) { parser.parse('((])') }
+    assert_syntax_error('"(" or ")"', 1) { parser.parse('(]') }
+    assert_syntax_error('"(" or ")"', 2) { parser.parse('((])') }
   end
 
   private
@@ -96,6 +96,10 @@ class SyntaxErrorTest < Test::Unit::TestCase
     exception = assert_raise(SyntaxError, &block)
 
     assert_equal expectation, exception.expectation
-    assert_equal position,    exception.position if position
+
+    if position
+      message = "Expecting syntax error at possition #{position}, but got: #{exception.message}"
+      assert_equal position, exception.position, message
+    end
   end
 end
